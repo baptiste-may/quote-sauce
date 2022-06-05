@@ -13,12 +13,15 @@ public class Main {
     public static JDA jda;
 
     public static void main(String[] args) throws LoginException {
+
         JDABuilder builder = JDABuilder.createDefault(System.getenv().get("TOKEN"));
 
         builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
         builder.setActivity(Activity.watching("être développé"));
 
         jda = builder.build();
+
+        new Setup(jda);
     }
 
 }
