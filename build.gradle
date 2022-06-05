@@ -17,6 +17,9 @@ test {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    implementation 'org.javacord:javacord:3.4.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2'
+    runtimeOnly 'org.apache.logging.log4j:log4j-core:2.17.2'
     implementation("net.dv8tion:JDA:5.0.0-alpha.12")
 }
 
