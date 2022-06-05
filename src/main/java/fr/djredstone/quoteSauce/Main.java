@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 public class Main {
 
-    public static final String prefix = ":";
+    public static final String prefix = ",";
     public static JDA jda;
 
     public static void main(String[] args) throws LoginException {

@@ -6,7 +6,9 @@ public class Utils {
 
     public static void reply(String message, MessageReceivedEvent event) {
 
-
+        event.getChannel().sendTyping().queue();
+        event.getChannel().sendMessage(message).queue();
+        event.getMessage().delete().queue();
 
     }
 
