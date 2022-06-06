@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class Main implements EventListener {
 
-    public static final String relativePath = new File("").getAbsolutePath() + "\\src\\main\\java\\fr\\djredstone\\quoteSauce";
-
     public static final String prefix = ",";
     public static JDA jda;
 

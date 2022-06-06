@@ -52,7 +52,7 @@ public class Setup {
 
     private static void themeList() throws IOException {
         StringBuilder builder = new StringBuilder("Available themes : ");
-        String path = Main.relativePath + "\\themes";
+        String path = "./themes";
         boolean first = true;
         for (File file : Objects.requireNonNull(new File(path).listFiles())) {
             if (!first) builder.append(" - ");
