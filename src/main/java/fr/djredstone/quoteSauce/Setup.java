@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 
 import fr.djredstone.quoteSauce.commands.Ping;
+import fr.djredstone.quoteSauce.commands.ThemeList;
 import org.apache.commons.io.FilenameUtils;
 
 public class Setup {
@@ -29,6 +30,7 @@ public class Setup {
 
     private static void commands(JDA jda) {
         jda.addEventListener(new Ping());
+        jda.addEventListener(new ThemeList());
     }
 
     private static int activity = 0;
