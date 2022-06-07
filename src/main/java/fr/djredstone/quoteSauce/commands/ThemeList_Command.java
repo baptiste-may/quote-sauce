@@ -10,7 +10,7 @@ import fr.djredstone.quoteSauce.Main;
 import fr.djredstone.quoteSauce.Utils;
 import org.apache.commons.io.FilenameUtils;
 
-public class ThemeList extends ListenerAdapter {
+public class ThemeList_Command extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -24,7 +24,7 @@ public class ThemeList extends ListenerAdapter {
             else first = false;
             builder.append("`").append(FilenameUtils.removeExtension(file.getName())).append("`");
         }
-        Utils.reply(builder.toString(), event);
+        Utils.reply(event, builder.toString());
 
     }
 
