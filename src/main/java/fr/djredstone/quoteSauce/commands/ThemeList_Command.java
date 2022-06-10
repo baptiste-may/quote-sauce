@@ -15,7 +15,8 @@ public class ThemeList_Command extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + "themelist") && !event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + "tl")) return;
+        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + "themelist")
+                && !event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + "tl")) return;
         StringBuilder builder = new StringBuilder("Thèmes disponibles : ");
         String path = "./themes";
         boolean first = true;

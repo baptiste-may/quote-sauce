@@ -11,7 +11,7 @@ public class Ping_Command extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + "ping")) return;
+        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + "ping")) return;
         Utils.reply(event, "Pong ! \uD83C\uDFD3 (`" + Main.jda.getGatewayPing() + " ms`)");
 
     }
