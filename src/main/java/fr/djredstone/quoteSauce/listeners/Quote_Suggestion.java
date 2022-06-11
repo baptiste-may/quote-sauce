@@ -11,10 +11,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import fr.djredstone.quoteSauce.Main;
 import fr.djredstone.quoteSauce.game.Game;
-import fr.djredstone.quoteSauce.game.Timeout;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
-import org.javatuples.Triplet;
 
 public class Quote_Suggestion extends ListenerAdapter {
 
