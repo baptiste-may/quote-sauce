@@ -1,6 +1,10 @@
 package fr.djredstone.quoteSauce.commands;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -9,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import fr.djredstone.quoteSauce.Main;
 import fr.djredstone.quoteSauce.Utils;
 import org.apache.commons.io.FilenameUtils;
+import org.yaml.snakeyaml.Yaml;
 
 public class ThemeList_Command extends ListenerAdapter {
 
@@ -25,9 +30,16 @@ public class ThemeList_Command extends ListenerAdapter {
         String path = "./themes";
         boolean first = true;
         for (File file : Objects.requireNonNull(new File(path).listFiles())) {
-            if (!first) builder.append(" | ");
-            else first = false;
-            builder.append("`").append(FilenameUtils.removeExtension(file.getName())).append("`");
+            try {
+                String fileName = FilenameUtils.removeExtension(file.getName());
+                Map<String, Object> map = new Yaml().load(new FileInputStream(file));
+                String themeName = (String) map.get("name");
+
+                if (!first) builder.append(" | ");
+                else first = false;
+
+                builder.append("**").append(themeName).append("** (`").append(fileName).append("`)");
+            } catch (Exception ignored) {}
         }
         Utils.reply(event, builder.toString());
 
