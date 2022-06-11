@@ -134,4 +134,3 @@ gradle-app.setting
 run/
 *.bin
 *.lock
-*.class
