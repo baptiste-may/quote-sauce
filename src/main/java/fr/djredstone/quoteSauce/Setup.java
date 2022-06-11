@@ -16,6 +16,7 @@ import fr.djredstone.quoteSauce.commands.Help_Command;
 import fr.djredstone.quoteSauce.commands.Ping_Command;
 import fr.djredstone.quoteSauce.commands.Start_Command;
 import fr.djredstone.quoteSauce.commands.ThemeList_Command;
+import fr.djredstone.quoteSauce.listeners.Quote_Suggestion;
 import org.apache.commons.io.FilenameUtils;
 
 public class Setup {
@@ -24,6 +25,7 @@ public class Setup {
 
         commands(jda);
         buttons(jda);
+        listeners(jda);
         activity();
         try {
             themeList();
@@ -42,6 +44,10 @@ public class Setup {
 
     private static void buttons(JDA jda) {
         jda.addEventListener(new Join_Button());
+    }
+
+    private static void listeners(JDA jda) {
+        jda.addEventListener(new Quote_Suggestion());
     }
 
     private static int activity = 0;

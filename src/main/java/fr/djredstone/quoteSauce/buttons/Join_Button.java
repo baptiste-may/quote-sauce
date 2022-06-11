@@ -11,10 +11,10 @@ public class Join_Button extends ListenerAdapter {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (event.getComponentId().equals((Main.devMode ? "TEST_" : "") + "join-game")) {
-            if (Game.games.get(event.getChannel().getId()).getValue0().containsKey(event.getUser().getId())) {
+            if (Game.games.get(event.getChannel().getId()).getValue1().containsKey(event.getUser().getId())) {
                 event.reply("Vous êtes déjà dans le jeu !").setEphemeral(true).queue();
             } else {
-                Game.games.get(event.getChannel().getId()).getValue0().put(event.getUser().getId(), 0);
+                Game.games.get(event.getChannel().getId()).getValue1().put(event.getUser().getId(), 0);
                 event.reply("Vous avez rejoind le jeu !").setEphemeral(true).queue();
             }
         }
