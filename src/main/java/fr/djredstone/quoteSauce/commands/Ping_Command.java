@@ -8,10 +8,13 @@ import fr.djredstone.quoteSauce.Utils;
 
 public class Ping_Command extends ListenerAdapter {
 
+    private static final String cmd = "ping";
+    public Ping_Command() { Help_Command.cmds.put(cmd, "Affiche la vitesse de réaction du bot"); }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + "ping")) return;
+        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd)) return;
         Utils.reply(event, "Pong ! \uD83C\uDFD3 (`" + Main.jda.getGatewayPing() + " ms`)");
 
     }

@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 
 import fr.djredstone.quoteSauce.buttons.Join_Button;
+import fr.djredstone.quoteSauce.commands.Help_Command;
 import fr.djredstone.quoteSauce.commands.Ping_Command;
 import fr.djredstone.quoteSauce.commands.Start_Command;
 import fr.djredstone.quoteSauce.commands.ThemeList_Command;
@@ -33,6 +34,7 @@ public class Setup {
     }
 
     private static void commands(JDA jda) {
+        jda.addEventListener(new Help_Command());
         jda.addEventListener(new Ping_Command());
         jda.addEventListener(new Start_Command());
         jda.addEventListener(new ThemeList_Command());

@@ -12,11 +12,15 @@ import org.apache.commons.io.FilenameUtils;
 
 public class ThemeList_Command extends ListenerAdapter {
 
+    private static final String cmd = "themelist";
+    private static final String cmd2 = "tl";
+    public ThemeList_Command() { Help_Command.cmds.put(cmd + "` / `" + Main.prefix + cmd2, "Affiche tous les thèmes avec leurs ID"); }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + "themelist")
-                && !event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + "tl")) return;
+        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd)
+                && !event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd2)) return;
         StringBuilder builder = new StringBuilder("Thèmes disponibles : ");
         String path = "./themes";
         boolean first = true;

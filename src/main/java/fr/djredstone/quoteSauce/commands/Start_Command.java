@@ -18,12 +18,15 @@ import org.javatuples.Pair;
 
 public class Start_Command extends ListenerAdapter {
 
+    private static final String cmd = "start";
+    public Start_Command() { Help_Command.cmds.put(cmd, "Permet de commencer une partie"); }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
         final String content = event.getMessage().getContentRaw().toLowerCase();
         final String[] args = content.split("\\s+");
-        if (!content.startsWith(Main.prefix + (Main.devMode ? "test_" : "") + "start")) return;
+        if (!content.startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd)) return;
 
         if (args.length <= 1) {
             Utils.reply(event, "Veuillez entrer l'ID d'un thème");
