@@ -17,7 +17,7 @@ public class Main implements EventListener {
     public static final String prefix = ",";
     public static JDA jda;
 
-    public static final Boolean devMode = true;
+    public static final Boolean devMode = false;
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
