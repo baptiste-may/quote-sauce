@@ -1,5 +1,6 @@
 package fr.djredstone.quoteSauce.game;
 
+import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -8,23 +9,23 @@ import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import org.javatuples.Quartet;
 import org.javatuples.Quintet;
-import org.javatuples.Triplet;
 import org.yaml.snakeyaml.Yaml;
 
 public class Game {
 
     public static final int minmumPlayers = 2;
 
-    public static final HashMap<String, Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Triplet<Boolean, Integer, String>, Integer>> games = new HashMap<>();
-    // ChannelID : [ themeID | PlayersAndPoints : [ PlayerID | Points ] | Questions : [ QuestionNumber ] | ActualQuote: [ CanAswer | QuoteNumber | QuoteMessageID ] | MaxQuestionNumber]
+    public static final HashMap<String, Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Quartet<Boolean, Integer, String, TimerTask>, Integer>> games = new HashMap<>();
+    // ChannelID : [ themeID | PlayersAndPoints : [ PlayerID | Points ] | Questions : [ QuestionNumber ] | ActualQuote: [ CanAswer | QuoteNumber | QuoteMessageID | TimeoutTask ] | MaxQuestionNumber]
 
     @SuppressWarnings("unchecked")
     public static void startGame(TextChannel channel) throws FileNotFoundException {
         String[] messageID = new String[1];
         channel.sendMessage("Près ?").queue(message -> messageID[0] = message.getId());
 
-        Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Triplet<Boolean, Integer, String>, Integer> game = games.get(channel.getId());
+        Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Quartet<Boolean, Integer, String, TimerTask>, Integer> game = games.get(channel.getId());
 
         int nbQuote;
         nbQuote = new Random().nextInt(game.getValue4()) + 1;
@@ -37,24 +38,31 @@ public class Game {
             @Override
             public void run() {
                 channel.editMessageById(messageID[0], "> " + quote.get("quote") + "\n???").queue();
-                Triplet<Boolean, Integer, String> actualGame = new Triplet<>(true, finalNbQuote, messageID[0]);
+                TimerTask timeout = new Timeout(channel);
+                new Timer().schedule(timeout, 60 * 1000);
+                Quartet<Boolean, Integer, String, TimerTask> actualGame = new Quartet<>(true, finalNbQuote, messageID[0], timeout);
                 games.put(channel.getId(), game.setAt3(actualGame));
             }
         }, 3 * 1000);
     }
 
     @SuppressWarnings("unchecked")
-    public static void playerFindQuote(TextChannel channel, User user) throws FileNotFoundException {
-        Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Triplet<Boolean, Integer, String>, Integer> game = Game.games.get(channel.getId());
+    public static void playerFindQuote(TextChannel channel, @Nullable User user) throws FileNotFoundException {
+        Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Quartet<Boolean, Integer, String, TimerTask>, Integer> game = Game.games.get(channel.getId());
         HashMap<String, Object> quote = (HashMap<String, Object>) Game.getQuestions(game.getValue0()).get(game.getValue3().getValue1()-1);
         ArrayList<Object> aswers = (ArrayList<Object>) quote.get("aswer");
-        HashMap<String, Integer> actualPoints = game.getValue1();
-        actualPoints.put(user.getId(), game.getValue1().get(user.getId()) + 1);
-        Triplet<Boolean, Integer, String> actualGame = new Triplet<>(false, game.getValue3().getValue1(), game.getValue3().getValue2());
+        Quartet<Boolean, Integer, String, TimerTask> actualGame = new Quartet<>(false, game.getValue3().getValue1(), game.getValue3().getValue2(), null);
         games.put(channel.getId(), game.setAt3(actualGame));
-        games.put(channel.getId(), game.setAt1(actualPoints));
-        channel.editMessageById(game.getValue3().getValue2(), "> " + quote.get("quote") + "\n" + aswers.get(0)).queue();
-        channel.sendMessage("**" + user.getAsTag() + "** a trouvé ! Il s'agissait de **" + aswers.get(0) + "** !").queue();
+        if (user == null) {
+            channel.editMessageById(game.getValue3().getValue2(), "> " + quote.get("quote") + "\n" + aswers.get(0)).queue();
+            channel.sendMessage("Personne n'a trouvé ! Il s'agissait de **" + aswers.get(0) + "** !").queue();
+        } else {
+            HashMap<String, Integer> actualPoints = game.getValue1();
+            actualPoints.put(user.getId(), game.getValue1().get(user.getId()) + 1);
+            games.put(channel.getId(), game.setAt1(actualPoints));
+            channel.editMessageById(game.getValue3().getValue2(), "> " + quote.get("quote") + "\n" + aswers.get(0)).queue();
+            channel.sendMessage("**" + user.getAsTag() + "** a trouvé ! Il s'agissait de **" + aswers.get(0) + "** !").queue();
+        }
 
         new Timer().schedule(new TimerTask() {
             @Override
@@ -71,7 +79,7 @@ public class Game {
     @SuppressWarnings("unchecked")
     private static void nextQuote(TextChannel channel) throws FileNotFoundException {
         String[] messageID = new String[1];
-        Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Triplet<Boolean, Integer, String>, Integer> game = games.get(channel.getId());
+        Quintet<String, HashMap<String, Integer>, HashSet<Integer>, Quartet<Boolean, Integer, String, TimerTask>, Integer> game = games.get(channel.getId());
 
         int nbQuote;
         if (game.getValue2().size() >= game.getValue4()) {
@@ -92,7 +100,9 @@ public class Game {
             @Override
             public void run() {
                 channel.editMessageById(messageID[0], "> " + quote.get("quote") + "\n???").queue();
-                Triplet<Boolean, Integer, String> actualGame = new Triplet<>(true, finalNbQuote, messageID[0]);
+                TimerTask timeout = new Timeout(channel);
+                new Timer().schedule(timeout, 60 * 1000);
+                Quartet<Boolean, Integer, String, TimerTask> actualGame = new Quartet<>(true, finalNbQuote, messageID[0], timeout);
                 games.put(channel.getId(), game.setAt3(actualGame));
             }
         }, 3 * 1000);

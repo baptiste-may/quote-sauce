@@ -18,8 +18,8 @@ import fr.djredstone.quoteSauce.Main;
 import fr.djredstone.quoteSauce.Setup;
 import fr.djredstone.quoteSauce.Utils;
 import fr.djredstone.quoteSauce.game.Game;
+import org.javatuples.Quartet;
 import org.javatuples.Quintet;
-import org.javatuples.Triplet;
 import org.yaml.snakeyaml.Yaml;
 
 public class Start_Command extends ListenerAdapter {
@@ -79,7 +79,7 @@ public class Start_Command extends ListenerAdapter {
         event.getMessage().delete().queue();
         HashMap<String, Integer> PlayersAndPoints = new HashMap<>();
         PlayersAndPoints.put(event.getAuthor().getId(), 0);
-        Game.games.put(event.getChannel().getId(), new Quintet<>(args[1], PlayersAndPoints, new HashSet<>(), new Triplet<>(false, null, null), maxQuestionNumber));
+        Game.games.put(event.getChannel().getId(), new Quintet<>(args[1], PlayersAndPoints, new HashSet<>(), new Quartet<>(false, null, null, null), maxQuestionNumber));
 
         int finalMaxQuestionNumber = maxQuestionNumber;
         new Timer().schedule(new TimerTask() {
