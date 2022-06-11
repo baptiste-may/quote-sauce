@@ -7,7 +7,6 @@ public class Utils {
 
     public static void reply(MessageReceivedEvent event, String message) {
 
-        event.getChannel().sendTyping().queue();
         event.getChannel().sendMessage(message).queue();
         event.getMessage().delete().queue();
 
@@ -15,7 +14,6 @@ public class Utils {
 
     public static void reply(MessageReceivedEvent event, String message, ItemComponent... components) {
 
-        event.getChannel().sendTyping().queue();
         if (components.length == 0) event.getChannel().sendMessage(message).queue();
         else event.getChannel().sendMessage(message).setActionRow(components).queue();
         event.getMessage().delete().queue();
