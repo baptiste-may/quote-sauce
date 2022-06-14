@@ -1,99 +1,99 @@
 name: Wankil Studio
 questions:
-  - number: "1"
+  - number: 1
     quote: "Soit il y a le marchand de srabs qui est passé, [...]"
     aswer:
       - "Hugo Délire"
       - "Hugo"
-  - number: "2"
+  - number: 2
     quote: "Je me tire des bâtons dans les roues."
     aswer:
       - "Laink"
       - "Thomas"
       - "Thomas Iturralde"
-  - number: "3"
+  - number: 3
     quote: "Le troisième reich du deck !"
     aswer:
       - "Amixem"
       - "Maxime"
       - "Maxime Chabroud"
-  - number: "4"
+  - number: 4
     quote: "T'en as fait deux."
     aswer:
       - "Squeezie"
       - "Lucas"
       - "Lucas Hauchard"
-  - number: "5"
+  - number: 5
     quote: "J'peux aller que à 100/h !"
     aswer:
       - "Cyril"
       - "Cyrilmp4"
       - "Cyril Soudant"
-  - number: "6"
+  - number: 6
     quote: "Non parce qu'en fait ça va m'énerver..."
     aswer:
       - "Hugo Délire"
       - "Hugo"
-  - number: "7"
+  - number: 7
     quote: "Moi je faisais les caillous."
     aswer:
       - "Snaptrox"
       - "Snap"
-  - number: "8"
+  - number: 8
     quote: "Ca serait pas arrivé avec Squeezie !"
     aswer:
       - "Terracid"
       - "Terra"
       - "Damien"
-  - number: "9"
+  - number: 9
     quote: "Banbino repéré !"
     aswer:
       - "Mickalow"
       - "Micka"
       - "Mickaêl"
       - "Mickaêl Maruin"
-  - number: "10"
+  - number: 10
     quote: "J'ai deux clés !"
     aswer:
       - "Laink"
       - "Thomas"
       - "Thomas Iturralde"
-  - number: "11"
+  - number: 11
     quote: "C'était bien essayé mais apparemment on repart depuis le début."
     aswer:
       - "Joyca"
       - "Jordan"
       - "Jordan Rondelli"
-  - number: "12"
+  - number: 12
     quote: "William Clarke ! Amazing !"
     aswer:
       - "Feldup"
-  - number: "13"
+  - number: 13
     quote: "J'n'ai plus de tête !"
     aswer:
       - "Cyril"
       - "Cyrilmp4"
       - "Cyril Soudant"
-  - number: "14"
+  - number: 14
     quote: "La voiture ? Bas la voiture est là."
     aswer:
       - "Snaptrox"
       - "Snap"
-  - number: "15"
+  - number: 15
     quote: "- 903,5"
     aswer:
       - "Kameto"
       - "Kamel"
       - "Kamel Kebir"
-  - number: "16"
+  - number: 16
     quote: "Il défriche votre froc ! Sautez sur l'affaire !"
     aswer:
       - "Potatoz"
-  - number: "17"
+  - number: 17
     quote: "Deviens français comme un français vrai français !"
     aswer:
       - "Hayzzer"
-  - number: "18"
+  - number: 18
     quote: "Le brain a fonctionné !"
     aswer:
       - "Jiraya"
