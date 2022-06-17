@@ -7,7 +7,7 @@ Le préfix du robot est `,` afin de ne pas rentrer en conflit avec d'autres bots
 
 ## Le système de jeu
 
-Dans un premier temps, un joueur lance une partie grâce à la commande `,start [ID]`.
+Dans un premier temps, un joueur lance une partie grâce à la commande `,start [ID]` ou avec un lien dans le style `,start [URL]`.
 A ce moment là, les autres joueurs ont **30 secondes** pour rejoindre la partie en cliquand sur un boutton de ce style :
 
 ![](https://cdn.discordapp.com/attachments/555402600640413713/985177647652958298/unknown.png)
@@ -19,7 +19,7 @@ Les citations s'enchainent et un classement est révélé à la fin.
 
 ## Le système de thèmes
 
-Pour démmarer une partie, il faut entrer une ID d'un thème.
-Tous les thèmes disponibles sont affichable avec la commande `,themeList` ou `,tl`.
+Pour démmarer une partie, il faut entrer une ID ou l'URL d'un thème.
+Tous les thèmes publiques disponibles sont affichable avec la commande `,themeList` ou `,tl`.
 Chaque thème est créer manuelement sous format `YAML`.
 Plus d'informations sur le [wiki](https://github.com/DjRedstone/quote-sauce/wiki/Thèmes#comment-créer-un-thème-).

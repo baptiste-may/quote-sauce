@@ -21,13 +21,13 @@ hs_err_pid*
 
 # GRADLE
 .idea
-.idea/
+.idea\
 *.idea
 .gradle
-.gradle/
+.gradle\
 *.gradle
 build
-build/
+build\
 *build
 
 bin

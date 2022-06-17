@@ -2,6 +2,10 @@ package fr.djredstone.quoteSauce.commands;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +19,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import fr.djredstone.quoteSauce.Main;
-import fr.djredstone.quoteSauce.Setup;
 import fr.djredstone.quoteSauce.Utils;
 import fr.djredstone.quoteSauce.game.Game;
 import org.javatuples.Quartet;
@@ -36,11 +39,7 @@ public class Start_Command extends ListenerAdapter {
         if (!content.startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd)) return;
 
         if (args.length <= 1) {
-            Utils.reply(event, "Veuillez entrer l'ID d'un thème \uD83D\uDCCE");
-            return;
-        }
-        if (!Setup.themeList.contains(args[1])) {
-            Utils.reply(event, "L'ID est inconnu \uD83E\uDD14");
+            Utils.reply(event, "Veuillez entrer l'ID ou l'URL d'un thème \uD83D\uDCCE");
             return;
         }
 
@@ -49,28 +48,21 @@ public class Start_Command extends ListenerAdapter {
             return;
         }
 
-        int maxQuestionNumber = 0;
-        try {
-            ArrayList<Object> questions = Game.getQuestions(args[1]);
-            for (Object key : questions) {
-                final HashMap<String, Object> quote = (HashMap<String, Object>) key;
-                final int number = (int) quote.get("number");
-                if (number > maxQuestionNumber)
-                    maxQuestionNumber = number;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
         String[] messageID = new String[1];
-        Map<String, Object> map;
-        try {
-            map = new Yaml().load(new FileInputStream("./themes/" + args[1] + ".yaml"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        Map<String, Object> map = getGame(args[1]);
+        if (map == null || !validYAML(map)) {
+            Utils.reply(event, "Une erreur s'est produite \uD83E\uDD14");
             return;
         }
         String themeName = (String) map.get("name");
+        int maxQuestionNumber = 0;
+        ArrayList<Object> questions = (ArrayList<Object>) map.get("questions");
+        for (Object key : questions) {
+            final HashMap<String, Object> quote = (HashMap<String, Object>) key;
+            final int number = (int) quote.get("number");
+            if (number > maxQuestionNumber)
+                maxQuestionNumber = number;
+        }
         event.getChannel()
                 .sendMessage("Une partie commence dans **30s** ! \uD83D\uDCAA Elle est sur le thème : __" + themeName + "__ \uD83D\uDC40\n" +
                         "*Cliquez sur le bouton ci-dessous pour rejoindre la partie*")
@@ -79,7 +71,7 @@ public class Start_Command extends ListenerAdapter {
         event.getMessage().delete().queue();
         HashMap<String, Integer> PlayersAndPoints = new HashMap<>();
         PlayersAndPoints.put(event.getAuthor().getId(), 0);
-        Game.games.put(event.getChannel().getId(), new Quintet<>(args[1], PlayersAndPoints, new HashSet<>(), new Quartet<>(false, null, null, null), maxQuestionNumber));
+        Game.games.put(event.getChannel().getId(), new Quintet<>(map, PlayersAndPoints, new HashSet<>(), new Quartet<>(false, null, null, null), maxQuestionNumber));
 
         int finalMaxQuestionNumber = maxQuestionNumber;
         new Timer().schedule(new TimerTask() {
@@ -112,6 +104,43 @@ public class Start_Command extends ListenerAdapter {
             }
         }, 30 * 1000);
 
+    }
+
+    private static Map<String, Object> getGame(String URLorNAME) {
+        try {
+            URL url = new URL(URLorNAME);
+            InputStream stream = url.openStream();
+            return new Yaml().load(stream);
+        } catch (MalformedURLException e) {
+            try {
+                return new Yaml().load(new FileInputStream("./themes/" + URLorNAME + ".yaml"));
+            } catch (FileNotFoundException ex) {
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings({"unused", "unchecked"})
+    private static boolean validYAML(Map<String, Object> map) {
+        if (!map.containsKey("name")) return false;
+        ArrayList<Object> questions;
+        try {
+            questions = (ArrayList<Object>) map.get("questions");
+            for (Object question : questions) {
+                HashMap<String, Object> quote = (HashMap<String, Object>) question;
+                int number = (int) quote.get("number");
+                String sQuote = (String) quote.get("quote");
+                ArrayList<Object> aswers = (ArrayList<Object>) quote.get("aswer");
+                for (Object aswer : aswers) {
+                    String sAswer = (String) aswer;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }
