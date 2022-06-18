@@ -115,9 +115,11 @@ public class Start_Command extends ListenerAdapter {
             try {
                 return new Yaml().load(new FileInputStream("./themes/" + URLorNAME + ".yaml"));
             } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
                 return null;
             }
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }
