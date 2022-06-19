@@ -15,7 +15,7 @@ public class Ping_Command extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
 
         if (!event.getMessage().getContentRaw().toLowerCase().startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd)) return;
-        Utils.reply(event, "Pong ! \uD83C\uDFD3 (`" + Main.jda.getGatewayPing() + " ms`)");
+        Utils.replyEmbed(event, "Pong ! \uD83C\uDFD3", "`" + Main.jda.getGatewayPing() + " ms`");
 
     }
 

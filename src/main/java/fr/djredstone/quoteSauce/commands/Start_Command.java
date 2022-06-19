@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -42,37 +43,37 @@ public class Start_Command extends ListenerAdapter {
         if (!content.startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd)) return;
 
         if (Game.games.containsKey(event.getChannel().getId())) {
-            Utils.reply(event, "Une partie est déjà en cours ! ⛔️");
+            Utils.replyEmbed(event, "Une partie est déjà en cours ! ⛔️", null);
             return;
         }
 
         Map<String, Object> map;
         if (args.length <= 1) {
             if (event.getMessage().getAttachments().isEmpty()) {
-                Utils.reply(event, "Veuillez entrer une ID valable \uD83D\uDCCE");
+                Utils.replyEmbed(event, "Veuillez entrer une ID valable \uD83D\uDCCE", null);
                 return;
             } else {
                 Message.Attachment attachment = event.getMessage().getAttachments().get(0);
                 if (attachment.getFileExtension() == null) {
-                    Utils.reply(event, "Le thème personnalisé a un problème d'extension ❓");
+                    Utils.replyEmbed(event, "Le thème personnalisé a un problème d'extension ❓", null);
                     return;
                 }
                 if (!attachment.getFileExtension().equalsIgnoreCase("yaml") && !attachment.getFileExtension().equalsIgnoreCase("yml")) {
-                    Utils.reply(event, "Le thème personnalisé a un problème d'extension ❔");
+                    Utils.replyEmbed(event, "Le thème personnalisé a un problème d'extension ❔", null);
                     return;
                 }
                 map = getGame(attachment.getUrl());
             }
         } else {
             if (!Setup.themeList.contains(args[1])) {
-                Utils.reply(event, "Veuillez entrer une ID valable \uD83D\uDCCE");
+                Utils.replyEmbed(event, "Veuillez entrer une ID valable \uD83D\uDCCE", null);
                 return;
             }
             map = getGame(args[1]);
         }
 
         if (map == null || !validYAML(map)) {
-            Utils.reply(event, "Une erreur s'est produite \uD83E\uDD14");
+            Utils.replyEmbed(event, "Une erreur s'est produite \uD83E\uDD14", null);
             return;
         }
         String themeName = (String) map.get("name");
@@ -85,9 +86,12 @@ public class Start_Command extends ListenerAdapter {
                 maxQuestionNumber = number;
         }
         String[] messageID = new String[1];
+        EmbedBuilder embed = Utils.getDefaultEmbed()
+                .setFooter("Démarré par " + event.getAuthor().getAsTag(), event.getAuthor().getAvatarUrl())
+                .addField("Une partie commence dans **30s** ! \uD83D\uDCAA Elle est sur le thème : __" + themeName + "__ \uD83D\uDC40",
+                        "*Cliquez sur le bouton ci-dessous pour rejoindre la partie*", false);
         event.getChannel()
-                .sendMessage("Une partie commence dans **30s** ! \uD83D\uDCAA Elle est sur le thème : __" + themeName + "__ \uD83D\uDC40\n" +
-                        "*Cliquez sur le bouton ci-dessous pour rejoindre la partie*")
+                .sendMessageEmbeds(embed.build())
                 .setActionRow(Button.success((Main.devMode ? "TEST_" : "") + "join-game", "Rejoindre la partie \uD83C\uDF99"))
                 .queue(message -> messageID[0] = message.getId());
         event.getMessage().delete().queue();
@@ -101,17 +105,24 @@ public class Start_Command extends ListenerAdapter {
             public void run() {
                 if (Game.games.get(event.getChannel().getId()).getValue1().size() < 2) {
                     Game.games.remove(event.getChannel().getId());
+                    EmbedBuilder embed = Utils.getDefaultEmbed()
+                            .setFooter("Démarré par " + event.getAuthor().getAsTag(), event.getAuthor().getAvatarUrl())
+                            .addField("**Partie annulée !** \uD83D\uDED1",
+                                    "Il faut au moins __" + Game.minmumPlayers + "__ joueurs pour commencer une partie.", false);
                     event.getChannel()
-                            .editMessageById(messageID[0], "**Partie annulée !** \uD83D\uDED1 Il faut au moins __" + Game.minmumPlayers + "__ joueurs pour commencer une partie.")
-                            .setActionRows(new ArrayList<>()).queue();
+                            .editMessageEmbedsById(messageID[0], embed.build())
+                            .setActionRow(Button.success("null", "Rejoindre la partie \uD83C\uDF99").asDisabled()).queue();
                 } else {
                     System.out.println("Game started at channel " + event.getChannel().getId() + " with " + finalMaxQuestionNumber + " questions");
-                    StringBuilder message = new StringBuilder("**La partie commence !** \uD83C\uDF99 (" + themeName + ")\n\n" +
-                            "Les joueurs suivants participents :\n");
+                    EmbedBuilder embed = Utils.getDefaultEmbed()
+                            .setTitle("**La partie commence !** \uD83C\uDF99 (" + themeName + ")")
+                            .setDescription("Les joueurs suivants participents :")
+                            .setFooter("Démarré par " + event.getAuthor().getAsTag(), event.getAuthor().getAvatarUrl());
+
                     for (String userID : Game.games.get(event.getChannel().getId()).getValue1().keySet()) {
-                        message.append("- ").append("<@").append(userID).append(">").append("\n");
+                        embed.addField("\uD83D\uDD38" + Main.jda.retrieveUserById(userID).complete().getAsTag(), "", true);
                     }
-                    event.getChannel().editMessageById(messageID[0], message).setActionRows(new ArrayList<>()).queue();
+                    event.getChannel().editMessageEmbedsById(messageID[0], embed.build()).setActionRow(Button.success("null", "Rejoindre la partie \uD83C\uDF99").asDisabled()).queue();
                     new Timer().schedule(new TimerTask() {
                         @Override
                         public void run() {

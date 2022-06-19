@@ -5,9 +5,12 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import fr.djredstone.quoteSauce.Main;
+import fr.djredstone.quoteSauce.Utils;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 
@@ -21,7 +24,9 @@ public class Game {
     @SuppressWarnings("unchecked")
     public static void startGame(TextChannel channel) throws FileNotFoundException {
         String[] messageID = new String[1];
-        channel.sendMessage("Près ?").queue(message -> messageID[0] = message.getId());
+        EmbedBuilder embed = Utils.getDefaultEmbed()
+                .setTitle("Près ?");
+        channel.sendMessageEmbeds(embed.build()).queue(message -> messageID[0] = message.getId());
 
         Quintet<Map<String, Object>, HashMap<String, Integer>, HashSet<Integer>, Quartet<Boolean, Integer, String, TimerTask>, Integer> game = games.get(channel.getId());
 
@@ -35,7 +40,10 @@ public class Game {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                channel.editMessageById(messageID[0], "> " + quote.get("quote") + "\n???").queue();
+                EmbedBuilder embed = Utils.getDefaultEmbed()
+                        .setTitle((String) quote.get("quote"))
+                        .setDescription("???");
+                channel.editMessageEmbedsById(messageID[0], embed.build()).queue();
                 TimerTask timeout = new Timeout(channel);
                 new Timer().schedule(timeout, 60 * 1000);
                 Quartet<Boolean, Integer, String, TimerTask> actualGame = new Quartet<>(true, finalNbQuote, messageID[0], timeout);
@@ -51,14 +59,17 @@ public class Game {
         ArrayList<Object> aswers = (ArrayList<Object>) quote.get("aswer");
         Quartet<Boolean, Integer, String, TimerTask> actualGame = new Quartet<>(false, game.getValue3().getValue1(), game.getValue3().getValue2(), null);
         games.put(channel.getId(), game.setAt3(actualGame));
+        EmbedBuilder embed = Utils.getDefaultEmbed()
+                .setTitle((String) quote.get("quote"))
+                .setDescription((CharSequence) aswers.get(0));
         if (user == null) {
-            channel.editMessageById(game.getValue3().getValue2(), "> " + quote.get("quote") + "\n" + aswers.get(0)).queue();
+            channel.editMessageEmbedsById(game.getValue3().getValue2(), embed.build()).queue();
             channel.sendMessage("Personne n'a trouvé ! Il s'agissait de **" + aswers.get(0) + "** !").queue();
         } else {
             HashMap<String, Integer> actualPoints = game.getValue1();
             actualPoints.put(user.getId(), game.getValue1().get(user.getId()) + 1);
             games.put(channel.getId(), game.setAt1(actualPoints));
-            channel.editMessageById(game.getValue3().getValue2(), "> " + quote.get("quote") + "\n" + aswers.get(0)).queue();
+            channel.editMessageEmbedsById(game.getValue3().getValue2(), embed.build()).queue();
             channel.sendMessage("**" + user.getAsTag() + "** a trouvé ! Il s'agissait de **" + aswers.get(0) + "** !").queue();
         }
 
@@ -84,7 +95,9 @@ public class Game {
             winGame(channel);
             return;
         } else {
-            channel.sendMessage("*Prochaine citation...*").queue(message -> messageID[0] = message.getId());
+            channel.sendMessageEmbeds(Utils.getDefaultEmbed()
+                    .setTitle("Prochaine citation...").build())
+                    .queue(message -> messageID[0] = message.getId());
             do {
                 nbQuote = new Random().nextInt(game.getValue4()) + 1;
             } while (game.getValue2().contains(nbQuote));
@@ -97,7 +110,10 @@ public class Game {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                channel.editMessageById(messageID[0], "> " + quote.get("quote") + "\n???").queue();
+                EmbedBuilder embed = Utils.getDefaultEmbed()
+                        .setTitle((String) quote.get("quote"))
+                        .setDescription("???");
+                channel.editMessageEmbedsById(messageID[0], embed.build()).queue();
                 TimerTask timeout = new Timeout(channel);
                 new Timer().schedule(timeout, 60 * 1000);
                 Quartet<Boolean, Integer, String, TimerTask> actualGame = new Quartet<>(true, finalNbQuote, messageID[0], timeout);
@@ -110,19 +126,21 @@ public class Game {
         Map<String, Object> map;
         map = games.get(channel.getId()).getValue0();
         String themeName = (String) map.get("name");
-        StringBuilder results = new StringBuilder("**Partie terminée !** \uD83C\uDFC6 (" + themeName + ")\n" +
-                "Voici les résultats :\n\n");
+        EmbedBuilder embed = Utils.getDefaultEmbed()
+                .setTitle("Partie terminée ! \uD83C\uDFC6 (" + themeName + ")")
+                .setDescription("Voici les résultats :");
         Map<String, Integer> sortedResults = sortByValue(games.get(channel.getId()).getValue1());
         int i = 1;
         for (String userID : sortedResults.keySet()) {
-            results.append(i).append(" - ").append("<@").append(userID).append("> ");
-            if (i == 1) results.append("\uD83E\uDD47");
-            if (i == 2) results.append("\uD83E\uDD48");
-            if (i == 3) results.append("\uD83E\uDD49");
-            results.append(" (`").append(sortedResults.get(userID)).append("`)\n");
+            String more = "";
+            if (i == 1) more = "\uD83E\uDD47";
+            if (i == 2) more = "\uD83E\uDD48";
+            if (i == 3) more = "\uD83E\uDD49";
+            embed.addField(i + " - " + Main.jda.retrieveUserById(userID).complete().getAsTag() + " " + more,
+                    String.valueOf(sortedResults.get(userID)), false);
             i ++;
         }
-        channel.sendMessage(results).queue();
+        channel.sendMessageEmbeds(embed.build()).queue();
         games.remove(channel.getId());
     }
 
