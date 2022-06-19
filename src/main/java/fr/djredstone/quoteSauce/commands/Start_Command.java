@@ -13,12 +13,14 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import fr.djredstone.quoteSauce.Main;
+import fr.djredstone.quoteSauce.Setup;
 import fr.djredstone.quoteSauce.Utils;
 import fr.djredstone.quoteSauce.game.Game;
 import org.javatuples.Quartet;
@@ -38,18 +40,36 @@ public class Start_Command extends ListenerAdapter {
         final String[] args = content.split("\\s+");
         if (!content.startsWith(Main.prefix + (Main.devMode ? "test_" : "") + cmd)) return;
 
-        if (args.length <= 1) {
-            Utils.reply(event, "Veuillez entrer l'ID ou l'URL d'un thème \uD83D\uDCCE");
-            return;
-        }
-
         if (Game.games.containsKey(event.getChannel().getId())) {
             Utils.reply(event, "Une partie est déjà en cours ! ⛔️");
             return;
         }
 
-        String[] messageID = new String[1];
-        Map<String, Object> map = getGame(args[1]);
+        Map<String, Object> map;
+        if (args.length <= 1) {
+            if (event.getMessage().getAttachments().isEmpty()) {
+                Utils.reply(event, "Veuillez entrer une ID valable \uD83D\uDCCE");
+                return;
+            } else {
+                Message.Attachment attachment = event.getMessage().getAttachments().get(0);
+                if (attachment.getFileExtension() == null) {
+                    Utils.reply(event, "Le thème personnalisé a un problème d'extension ❓");
+                    return;
+                }
+                if (!attachment.getFileExtension().equalsIgnoreCase("yaml") && !attachment.getFileExtension().equalsIgnoreCase("yml")) {
+                    Utils.reply(event, "Le thème personnalisé a un problème d'extension ❔");
+                    return;
+                }
+                map = getGame(attachment.getUrl());
+            }
+        } else {
+            if (!Setup.themeList.contains(args[1])) {
+                Utils.reply(event, "Veuillez entrer une ID valable \uD83D\uDCCE");
+                return;
+            }
+            map = getGame(args[1]);
+        }
+
         if (map == null || !validYAML(map)) {
             Utils.reply(event, "Une erreur s'est produite \uD83E\uDD14");
             return;
@@ -63,6 +83,7 @@ public class Start_Command extends ListenerAdapter {
             if (number > maxQuestionNumber)
                 maxQuestionNumber = number;
         }
+        String[] messageID = new String[1];
         event.getChannel()
                 .sendMessage("Une partie commence dans **30s** ! \uD83D\uDCAA Elle est sur le thème : __" + themeName + "__ \uD83D\uDC40\n" +
                         "*Cliquez sur le bouton ci-dessous pour rejoindre la partie*")
@@ -110,16 +131,18 @@ public class Start_Command extends ListenerAdapter {
         try {
             URL url = new URL(URLorNAME);
             InputStream stream = url.openStream();
-            return new Yaml().load(stream);
+            try {
+                return new Yaml().load(stream);
+            } catch (Exception e) {
+                return null;
+            }
         } catch (MalformedURLException e) {
             try {
                 return new Yaml().load(new FileInputStream("./themes/" + URLorNAME + ".yaml"));
             } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
                 return null;
             }
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
