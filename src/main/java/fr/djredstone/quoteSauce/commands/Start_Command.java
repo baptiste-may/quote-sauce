@@ -30,7 +30,8 @@ import org.yaml.snakeyaml.Yaml;
 public class Start_Command extends ListenerAdapter {
 
     private static final String cmd = "start";
-    public Start_Command() { Help_Command.cmds.put(cmd, "Permet de commencer une partie"); }
+    private static final String arg = "[ID]";
+    public Start_Command() { Help_Command.cmds.put(cmd + " " + arg, "Permet de commencer une partie"); }
 
     @SuppressWarnings("unchecked")
     @Override
